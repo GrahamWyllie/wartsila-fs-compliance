@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Field Services Compliance Process | Wärtsilä × The Cozm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --wartsila-blue: #003882;
+            --wartsila-orange: #FF6B00;
+            --wartsila-light: #E8EEF4;
+            --cozm-teal: #40AEBC;
+            --cozm-dark: #1E3932;
+            --bg: #F4F6F8;
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --red: #EF4444;
+            --red-bg: #FEF2F2;
+            --red-border: #FECACA;
+            --amber: #F59E0B;
+            --amber-bg: #FFFBEB;
+            --amber-border: #FDE68A;
+            --green: #10B981;
+            --green-bg: #ECFDF5;
+            --green-border: #A7F3D0;
+            --blue-bg: #EFF6FF;
+            --blue-border: #BFDBFE;
+            --purple: #8B5CF6;
+            --purple-bg: #F5F3FF;
+            --purple-border: #DDD6FE;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0.875rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .brand-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--wartsila-blue), var(--wartsila-orange));
+        }
+
+        .brand-name { font-size: 1.05rem; font-weight: 700; color: var(--wartsila-blue); }
+
+        .cozm-logo { font-size: 1rem; font-weight: 800; }
+        .cozm-logo .the { color: var(--cozm-teal); }
+        .cozm-logo .cozm { color: var(--cozm-dark); }
+
+        .header-center {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: 8px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .toggle-btn {
+            padding: 0.4rem 1rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: transparent;
+            color: var(--gray-500);
+        }
+
+        .toggle-btn.active {
+            background: var(--white);
+            color: var(--gray-900);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .toggle-btn:hover:not(.active) { color: var(--gray-700); }
+
+        /* Container */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Title */
+        .page-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title h1 {
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: var(--gray-900);
+        }
+
+        .page-title h1 strong {
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--wartsila-blue), var(--cozm-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title p {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .legend-dot {
+            width: 10px; height: 10px;
+            border-radius: 3px;
+        }
+
+        .legend-dot.manual { background: var(--gray-300); }
+        .legend-dot.partial { background: var(--amber); }
+        .legend-dot.automated { background: var(--green); }
+        .legend-dot.tbc { background: var(--purple); border: 1px dashed var(--purple); }
+
+        /* Phase headers */
+        .phase-row {
+            display: grid;
+            grid-template-columns: 160px repeat(5, 1fr);
+            gap: 2px;
+            margin-bottom: 2px;
+        }
+
+        .phase-label-spacer { background: transparent; }
+
+        .phase-label {
+            text-align: center;
+            padding: 0.6rem 0.5rem;
+            font-size: 0.62rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .phase-planning { background: rgba(0, 56, 130, 0.08); color: var(--wartsila-blue); }
+        .phase-assessment { background: rgba(0, 56, 130, 0.12); color: var(--wartsila-blue); }
+        .phase-pretrip { background: rgba(64, 174, 188, 0.1); color: var(--cozm-teal); }
+        .phase-travel { background: rgba(64, 174, 188, 0.15); color: var(--cozm-dark); }
+        .phase-posttrip { background: rgba(64, 174, 188, 0.1); color: var(--cozm-teal); }
+
+        .phase-timing {
+            display: block;
+            font-size: 0.55rem;
+            font-weight: 500;
+            opacity: 0.7;
+            margin-top: 0.15rem;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        /* Swimlane grid */
+        .swimlane-grid {
+            display: grid;
+            grid-template-columns: 160px repeat(5, 1fr);
+            gap: 2px;
+        }
+
+        /* Lane labels */
+        .lane-label {
+            background: var(--white);
+            border-left: 4px solid var(--wartsila-blue);
+            padding: 0.75rem 0.65rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 6px 0 0 6px;
+        }
+
+        .lane-label.vendor-lane { border-left-color: var(--cozm-teal); }
+        .lane-label.tools-lane { border-left-color: var(--gray-400); }
+
+        .lane-name {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .lane-sub {
+            font-size: 0.58rem;
+            color: var(--gray-400);
+            margin-top: 0.1rem;
+        }
+
+        /* Cells */
+        .cell {
+            background: var(--white);
+            padding: 0.6rem;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            position: relative;
+        }
+
+        .cell.empty { background: var(--gray-50); }
+
+        /* Step cards */
+        .step {
+            border-radius: 8px;
+            padding: 0.55rem 0.65rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            border: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .step:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            z-index: 10;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 0.72rem;
+            color: var(--gray-900);
+            margin-bottom: 0.15rem;
+        }
+
+        .step-detail {
+            font-size: 0.62rem;
+            color: var(--gray-500);
+            line-height: 1.45;
+        }
+
+        /* Automation status badges */
+        .auto-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            font-size: 0.5rem;
+            font-weight: 700;
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .auto-badge.manual {
+            background: var(--gray-100);
+            color: var(--gray-500);
+            border: 1px solid var(--gray-200);
+        }
+
+        .auto-badge.can-automate {
+            background: var(--green-bg);
+            color: #065F46;
+            border: 1px solid var(--green-border);
+        }
+
+        .auto-badge.partial-automate {
+            background: var(--amber-bg);
+            color: #92400E;
+            border: 1px solid var(--amber-border);
+        }
+
+        .auto-badge.tbc-badge {
+            background: var(--purple-bg);
+            color: #5B21B6;
+            border: 1px dashed var(--purple-border);
+        }
+
+        /* Step states based on current/future view */
+        .step.manual-step {
+            border-color: var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .step.auto-step {
+            border-color: var(--green-border);
+            background: var(--green-bg);
+        }
+
+        .step.partial-step {
+            border-color: var(--amber-border);
+            background: var(--amber-bg);
+        }
+
+        .step.tbc-step {
+            border-color: var(--purple-border);
+            background: var(--purple-bg);
+            border-style: dashed;
+        }
+
+        /* Tooltip on hover */
+        .step-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.68rem;
+            line-height: 1.5;
+            width: 260px;
+            z-index: 50;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            pointer-events: none;
+        }
+
+        .step-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--gray-900);
+        }
+
+        .step:hover .step-tooltip { display: block; }
+
+        .tooltip-label {
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .tooltip-label.green { color: var(--green); }
+        .tooltip-label.amber { color: var(--amber); }
+        .tooltip-label.purple { color: #A78BFA; }
+
+        /* TBC note */
+        .tbc-note {
+            font-size: 0.58rem;
+            color: var(--purple);
+            font-weight: 600;
+            font-style: italic;
+            padding: 0.3rem 0.5rem;
+            background: var(--purple-bg);
+            border-radius: 5px;
+            border: 1px dashed var(--purple-border);
+        }
+
+        /* Future view styles */
+        .future-view .step.will-automate {
+            border-color: var(--green-border);
+            background: var(--green-bg);
+        }
+
+        .future-view .step.will-automate .step-title {
+            color: #065F46;
+        }
+
+        .future-view .step.will-partial {
+            border-color: var(--amber-border);
+            background: var(--amber-bg);
+        }
+
+        .cozm-stamp {
+            display: none;
+            font-size: 0.5rem;
+            font-weight: 700;
+            color: var(--cozm-teal);
+            margin-top: 0.25rem;
+        }
+
+        .future-view .will-automate .cozm-stamp,
+        .future-view .will-partial .cozm-stamp {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        /* Summary stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.1rem;
+        }
+
+        .stat-number.gray { color: var(--gray-400); }
+        .stat-number.green { color: var(--green); }
+        .stat-number.amber { color: var(--amber); }
+        .stat-number.purple { color: var(--purple); }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* Before/After bar */
+        .comparison-bar {
+            display: none;
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .comparison-bar.visible { display: block; }
+
+        .comparison-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.85rem;
+        }
+
+        .comparison-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .comparison-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 24px;
+            background: var(--gray-100);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--white);
+            transition: width 0.8s ease;
+        }
+
+        .bar-fill.manual-fill { background: var(--gray-400); }
+        .bar-fill.auto-fill { background: var(--green); }
+        .bar-fill.partial-fill { background: var(--amber); }
+
+        /* Connectors/flow arrows between cells */
+        .flow-indicator {
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-300);
+            font-size: 0.7rem;
+            z-index: 5;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.68rem;
+            color: var(--gray-400);
+        }
+
+        .footer a { color: var(--cozm-teal); text-decoration: none; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Password Gate -->
+    <div id="password-gate" style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--bg);">
+        <div style="background:white; border-radius:14px; padding:2.5rem; box-shadow:0 8px 30px rgba(0,0,0,0.08); text-align:center; max-width:380px; width:90%;">
+            <div style="margin-bottom:1.25rem;">
+                <span style="font-size:1.1rem; font-weight:700; color:var(--wartsila-blue);">Wärtsilä</span>
+                <span style="font-size:0.75rem; color:var(--gray-500); margin:0 0.4rem;">&times;</span>
+                <span style="font-size:1.1rem; font-weight:800;"><span style="color:var(--cozm-teal);">the</span><span style="color:var(--cozm-dark);">Cozm</span></span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom:1.25rem;">Enter the password to view this document.</p>
+            <input id="pw-input" type="password" placeholder="Password" style="width:100%; padding:0.7rem 1rem; border:1px solid var(--gray-200); border-radius:8px; font-size:0.9rem; font-family:inherit; outline:none; margin-bottom:0.75rem;" onkeydown="if(event.key==='Enter')checkPw()">
+            <button onclick="checkPw()" style="width:100%; padding:0.7rem; background:var(--wartsila-blue); color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:inherit;">Continue</button>
+            <p id="pw-error" style="color:var(--red); font-size:0.75rem; margin-top:0.6rem; display:none;">Incorrect password. Please try again.</p>
+        </div>
+    </div>
+    <script>
+    function checkPw() {
+        if (document.getElementById('pw-input').value === 'wartsila2026') {
+            sessionStorage.setItem('wartsila-fs-auth', '1');
+            showContent();
+        } else {
+            document.getElementById('pw-error').style.display = 'block';
+        }
+    }
+    function showContent() {
+        document.getElementById('password-gate').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+    }
+    if (sessionStorage.getItem('wartsila-fs-auth') === '1') {
+        document.addEventListener('DOMContentLoaded', showContent);
+    }
+    </script>
+
+    <div id="main-content" style="display:none;">
+
+    <div class="header">
+        <div class="brand-left">
+            <div class="brand-dot"></div>
+            <div class="brand-name">Wärtsilä</div>
+        </div>
+        <div class="header-center">
+            <div class="view-toggle">
+                <button class="toggle-btn active" onclick="setView('current')">Current Process</button>
+                <button class="toggle-btn" onclick="setView('future')">With Cozm Unity</button>
+            </div>
+        </div>
+        <div class="cozm-logo"><span class="the">the</span><span class="cozm">Cozm</span></div>
+    </div>
+
+    <div class="page-container">
+
+        <div class="page-title">
+            <h1>Field Services <strong>Compliance Process</strong></h1>
+            <p>End-to-end view of cross-border compliance for field service assignments — from resource planning to post-trip obligations.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar" id="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number gray" id="stat-manual">12</div>
+                <div class="stat-label">Manual steps today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number green" id="stat-auto">8</div>
+                <div class="stat-label">Can be fully automated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number amber" id="stat-partial">3</div>
+                <div class="stat-label">Partially automatable</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number purple" id="stat-tbc">3</div>
+                <div class="stat-label">TBC / To be confirmed</div>
+            </div>
+        </div>
+
+        <!-- Before/After comparison (shown in future view) -->
+        <div class="comparison-bar" id="comparison-bar">
+            <div class="comparison-title">Process automation impact</div>
+            <div class="comparison-row">
+                <div class="comparison-label">Today</div>
+                <div class="bar-track">
+                    <div class="bar-fill manual-fill" style="width: 100%;">12 manual steps</div>
+                </div>
+            </div>
+            <div class="comparison-row">
+                <div class="comparison-label">With Unity</div>
+                <div class="bar-track">
+                    <div class="bar-fill auto-fill" id="bar-auto" style="width: 0%;">8 automated</div>
+                    <div class="bar-fill partial-fill" id="bar-partial" style="width: 0%; position:absolute; border-radius: 0 6px 6px 0;">3 assisted</div>
+                </div>
+            </div>
+            <p style="font-size:0.62rem; color:var(--gray-400); margin-top:0.6rem;">Only 1 step remains fully manual (travel itself). Cozm Unity handles or assists with 92% of the compliance process.</p>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot manual"></div> Manual today</div>
+            <div class="legend-item"><div class="legend-dot automated"></div> Can be automated</div>
+            <div class="legend-item"><div class="legend-dot partial"></div> Can be assisted</div>
+            <div class="legend-item"><div class="legend-dot tbc"></div> TBC</div>
+        </div>
+
+        <!-- Phase headers -->
+        <div class="phase-row">
+            <div class="phase-label-spacer"></div>
+            <div class="phase-label phase-planning">Planning<span class="phase-timing">Weeks – months before</span></div>
+            <div class="phase-label phase-assessment">Assessment<span class="phase-timing">Days – weeks before</span></div>
+            <div class="phase-label phase-pretrip">Pre-Trip Actions<span class="phase-timing">Days – weeks before</span></div>
+            <div class="phase-label phase-travel">Travel &amp; Work<span class="phase-timing">During assignment</span></div>
+            <div class="phase-label phase-posttrip">Post-Trip<span class="phase-timing">After return</span></div>
+        </div>
+
+        <!-- Swimlane grid -->
+        <div class="swimlane-grid" id="process-grid">
+
+            <!-- ROW 1: Internal Tools / Systems -->
+            <div class="lane-label tools-lane">
+                <div class="lane-name">Internal Tools</div>
+                <div class="lane-sub">Systems &amp; data</div>
+            </div>
+
+            <div class="cell">
+                <div class="step tbc-step" data-auto="tbc">
+                    <div class="auto-badge tbc-badge">TBC</div>
+                    <div class="step-title">Salesforce Resourcing</div>
+                    <div class="step-detail">Resource planning tool — used in Field Services. Different process in EPP &amp; ESB.</div>
+                    <div class="cozm-stamp">&#10003; Unity integration</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label purple">TBC</div>
+                        Confirm if this tool or another step triggers compliance actions. Integration with Unity could auto-trigger assessments when resources are confirmed.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">HR Data Pull</div>
+                    <div class="step-detail">Employee data, nationality, right to work status from SuccessFactors.</div>
+                    <div class="cozm-stamp">&#10003; Auto-sync from SuccessFactors</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity can pull employee master data, nationality, visa status and right-to-work records directly from SuccessFactors via API. No manual lookup needed.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Travel Booking Data</div>
+                    <div class="step-detail">Trip details from Concur — destination, dates, duration.</div>
+                    <div class="cozm-stamp">&#10003; Auto-ingest from Concur</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity ingests travel bookings from Concur in real-time. Booking data auto-triggers compliance assessment — no manual handoff required.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell empty"></div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Travel Calendar Update</div>
+                    <div class="step-detail">Update travel calendar based on actual travel days (currently vendor SAP tool / EY Travel Calendar).</div>
+                    <div class="cozm-stamp">&#10003; Auto-tracked in Unity</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity automatically tracks travel days per country per employee. Replaces manual calendar updates and vendor-specific tools. Feeds into day-count thresholds for tax and immigration.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 2: Resourcing Coordinators -->
+            <div class="lane-label">
+                <div class="lane-name">Resourcing Coordinators</div>
+                <div class="lane-sub">Resource planning</div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step" data-auto="manual">
+                    <div class="auto-badge manual">Manual</div>
+                    <div class="step-title">Resource Planning</div>
+                    <div class="step-detail">Evaluate competence, availability and right to work for assignment.</div>
+                    <div class="cozm-stamp"></div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label amber">Partially assistable</div>
+                        Resource selection remains a human decision, but Unity can surface right-to-work status and compliance risk per candidate to inform the choice.
+                    </div>
+                </div>
+                <div class="tbc-note">TBC: Resource coordinators only in Field Service?</div>
+            </div>
+
+            <div class="cell">
+                <div class="step tbc-step" data-auto="tbc">
+                    <div class="auto-badge tbc-badge">TBC</div>
+                    <div class="step-title">Resource Confirmed</div>
+                    <div class="step-detail">Resource confirmed and assignment details finalised.</div>
+                    <div class="cozm-stamp">&#10003; Auto-trigger assessment</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label purple">TBC</div>
+                        TBC: Is assessment triggered by resourcing tool confirmation or travel booking? Unity can trigger from either — needs business process decision.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell empty"></div>
+            <div class="cell empty"></div>
+            <div class="cell empty"></div>
+
+            <!-- ROW 3: Mobility Team -->
+            <div class="lane-label">
+                <div class="lane-name">Mobility Team</div>
+                <div class="lane-sub">Compliance &amp; coordination</div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-partial" data-auto="partial">
+                    <div class="auto-badge partial-automate">Assist</div>
+                    <div class="step-title">Pre-Planning</div>
+                    <div class="step-detail">For longer-term projects (EPP), pre-planning with corporate/project tax team required.</div>
+                    <div class="cozm-stamp">&#10003; Unity flags requirements</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label amber">Partially automatable</div>
+                        Unity can auto-identify when a project exceeds thresholds requiring tax team involvement, and generate pre-planning checklists. Human coordination still needed for complex structures.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Mobility Assessment</div>
+                    <div class="step-detail">Assess immigration, tax, social security, labour law obligations for the assignment.</div>
+                    <div class="cozm-stamp">&#10003; Instant auto-assessment</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity runs instant compliance assessment based on employee profile + destination + duration. Covers immigration, tax, social security and labour law. Results in seconds, not days.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Pre-Trip Filings</div>
+                    <div class="step-detail">A1 certificate, posted worker notification, assignment agreement preparation.</div>
+                    <div class="cozm-stamp">&#10003; Auto-filed by Unity</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity auto-generates and files A1 certificate applications, posted worker notifications (PWN/SIPSI etc.) and drafts assignment agreements. No manual form-filling.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell empty"></div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Post-Trip Compliance</div>
+                    <div class="step-detail">PWD remuneration check, tax reporting, payroll coordination.</div>
+                    <div class="cozm-stamp">&#10003; Auto-triggered by Unity</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity auto-triggers post-trip actions: PWD remuneration checks, tax return preparation, shadow payroll instructions. Deadlines tracked and escalated automatically.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 4: Employee -->
+            <div class="lane-label">
+                <div class="lane-name">Employee</div>
+                <div class="lane-sub">The traveller</div>
+            </div>
+
+            <div class="cell empty"></div>
+
+            <div class="cell">
+                <div class="step manual-step will-partial" data-auto="partial">
+                    <div class="auto-badge partial-automate">Assist</div>
+                    <div class="step-title">Support Assessment</div>
+                    <div class="step-detail">Provide personal documents, cooperate with immigration process.</div>
+                    <div class="cozm-stamp">&#10003; Self-service portal</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label amber">Partially automatable</div>
+                        Unity provides a self-service portal for document upload and digital signatures. Auto-reminders chase outstanding items. Employee still needs to provide the documents themselves.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-partial" data-auto="partial">
+                    <div class="auto-badge partial-automate">Assist</div>
+                    <div class="step-title">Visa / Work Permit Application</div>
+                    <div class="step-detail">Business visa or work permit application — employee action with company support.</div>
+                    <div class="cozm-stamp">&#10003; Guided by Unity</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label amber">Partially automatable</div>
+                        Unity provides step-by-step application guidance, pre-fills forms where possible, tracks application status and sends reminders. Employee still submits the application.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step" data-auto="manual">
+                    <div class="auto-badge manual">Manual</div>
+                    <div class="step-title">Travel &amp; Work On-Site</div>
+                    <div class="step-detail">Travel to location, carry required documents (A1, PWN attestation), complete assignment.</div>
+                    <div class="cozm-stamp"></div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label">Remains manual</div>
+                        The actual travel and work cannot be automated. However, Unity ensures all documents are emailed to the employee before departure and sends location-specific compliance reminders.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Post-Trip Cooperation</div>
+                    <div class="step-detail">Assist with post-trip tax processes, confirm payroll actions as needed.</div>
+                    <div class="cozm-stamp">&#10003; Auto-coordinated</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity auto-generates post-trip task lists, routes payroll instructions and coordinates with tax vendors. Employee receives a simple checklist via portal instead of ad-hoc emails.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 5: Vendor -->
+            <div class="lane-label vendor-lane">
+                <div class="lane-name">Vendor</div>
+                <div class="lane-sub">Immigration, tax, SSC</div>
+            </div>
+
+            <div class="cell">
+                <div class="step tbc-step" data-auto="tbc">
+                    <div class="auto-badge tbc-badge">TBC</div>
+                    <div class="step-title">Corporate / Project Tax</div>
+                    <div class="step-detail">Corporate tax / project tax team involvement for longer-term projects.</div>
+                    <div class="cozm-stamp">&#10003; Unity flags &amp; instructs</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label purple">TBC</div>
+                        TBC: Confirm if this step triggers compliance actions — depends on vendor &amp; technology. Unity can auto-instruct tax vendors when thresholds are met.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Immigration Support</div>
+                    <div class="step-detail">Vendor assists with work permit applications, provides company documents.</div>
+                    <div class="cozm-stamp">&#10003; Auto-instructed via Unity</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity auto-instructs immigration vendors with case details, deadlines and required documents. SLAs tracked, status updates flow back automatically.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Pre-Trip Vendor Actions</div>
+                    <div class="step-detail">Assistance with A1 filing, PWN submissions, assignment agreement support.</div>
+                    <div class="cozm-stamp">&#10003; Auto-filed by Unity</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity handles A1 and PWN filings directly — removing the need for vendor involvement in routine filings. Vendor only needed for complex cases.
+                    </div>
+                </div>
+            </div>
+
+            <div class="cell empty"></div>
+
+            <div class="cell">
+                <div class="step manual-step will-automate" data-auto="full">
+                    <div class="auto-badge can-automate">Automate</div>
+                    <div class="step-title">Post-Trip Vendor Work</div>
+                    <div class="step-detail">Tax returns, shadow payroll, PWD checks — vendor executes with mobility team coordination.</div>
+                    <div class="cozm-stamp">&#10003; Auto-instructed &amp; tracked</div>
+                    <div class="step-tooltip">
+                        <div class="tooltip-label green">Fully automatable</div>
+                        Unity auto-generates vendor instructions for tax returns and shadow payroll. Tracks deadlines and chases vendors automatically. Results flow back into reporting.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Field Services Compliance Process &middot; Wärtsilä &times; <a href="https://www.thecozm.com">The Cozm</a> &middot; Draft &middot; &copy; 2026
+    </div>
+
+    </div><!-- end main-content -->
+
+    <script>
+    function setView(view) {
+        const grid = document.getElementById('process-grid');
+        const btns = document.querySelectorAll('.toggle-btn');
+        const compBar = document.getElementById('comparison-bar');
+
+        btns.forEach(b => b.classList.remove('active'));
+
+        if (view === 'future') {
+            btns[1].classList.add('active');
+            grid.classList.add('future-view');
+            compBar.classList.add('visible');
+
+            // Animate comparison bars
+            setTimeout(() => {
+                document.getElementById('bar-auto').style.width = '67%';
+                document.getElementById('bar-partial').style.width = '25%';
+            }, 100);
+
+            // Update stats
+            document.getElementById('stat-manual').textContent = '1';
+            document.querySelector('#stats-bar .stat-card:first-child .stat-label').textContent = 'Remains manual';
+        } else {
+            btns[0].classList.add('active');
+            grid.classList.remove('future-view');
+            compBar.classList.remove('visible');
+
+            document.getElementById('bar-auto').style.width = '0%';
+            document.getElementById('bar-partial').style.width = '0%';
+
+            document.getElementById('stat-manual').textContent = '12';
+            document.querySelector('#stats-bar .stat-card:first-child .stat-label').textContent = 'Manual steps today';
+        }
+    }
+    </script>
+
+</body>
+</html>
