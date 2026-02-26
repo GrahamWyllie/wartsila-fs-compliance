@@ -403,7 +403,44 @@
             border: 1px dashed var(--purple-border);
         }
 
-        /* Future view styles */
+        /* ===== CURRENT VIEW: all non-TBC steps look manual ===== */
+        /* Hide green/amber badges on current view */
+        .auto-badge.can-automate,
+        .auto-badge.partial-automate {
+            display: none;
+        }
+
+        /* Show a manual overlay badge on steps that have can-automate or partial-automate */
+        .step.will-automate::before,
+        .step.will-partial::before {
+            content: 'MANUAL';
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            font-size: 0.5rem;
+            font-weight: 700;
+            padding: 0.12rem 0.35rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: var(--gray-100);
+            color: var(--gray-500);
+            border: 1px solid var(--gray-200);
+            z-index: 2;
+        }
+
+        /* ===== FUTURE VIEW: show real automation badges ===== */
+        .future-view .auto-badge.can-automate,
+        .future-view .auto-badge.partial-automate {
+            display: block;
+        }
+
+        /* Hide the manual overlay in future view */
+        .future-view .step.will-automate::before,
+        .future-view .step.will-partial::before {
+            display: none;
+        }
+
         .future-view .step.will-automate {
             border-color: var(--green-border);
             background: var(--green-bg);
@@ -436,9 +473,14 @@
         /* Summary stats bar */
         .stats-bar {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
             margin-bottom: 1.5rem;
+            transition: grid-template-columns 0.2s;
+        }
+
+        .stats-bar.expanded {
+            grid-template-columns: repeat(4, 1fr);
         }
 
         .stat-card {
@@ -610,15 +652,15 @@
         <div class="stats-bar" id="stats-bar">
             <div class="stat-card">
                 <div class="stat-number gray" id="stat-manual">12</div>
-                <div class="stat-label">Manual steps today</div>
+                <div class="stat-label" id="stat-manual-label">Manual steps today</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" id="stat-auto-card" style="display:none;">
                 <div class="stat-number green" id="stat-auto">8</div>
                 <div class="stat-label">Can be fully automated</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" id="stat-partial-card" style="display:none;">
                 <div class="stat-number amber" id="stat-partial">3</div>
-                <div class="stat-label">Partially automatable</div>
+                <div class="stat-label">Can be assisted</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number purple" id="stat-tbc">3</div>
@@ -646,10 +688,10 @@
         </div>
 
         <!-- Legend -->
-        <div class="legend">
+        <div class="legend" id="legend">
             <div class="legend-item"><div class="legend-dot manual"></div> Manual today</div>
-            <div class="legend-item"><div class="legend-dot automated"></div> Can be automated</div>
-            <div class="legend-item"><div class="legend-dot partial"></div> Can be assisted</div>
+            <div class="legend-item legend-future" style="display:none;"><div class="legend-dot automated"></div> Automated by Unity</div>
+            <div class="legend-item legend-future" style="display:none;"><div class="legend-dot partial"></div> Assisted by Unity</div>
             <div class="legend-item"><div class="legend-dot tbc"></div> TBC</div>
         </div>
 
@@ -958,6 +1000,10 @@
         const grid = document.getElementById('process-grid');
         const btns = document.querySelectorAll('.toggle-btn');
         const compBar = document.getElementById('comparison-bar');
+        const statsBar = document.getElementById('stats-bar');
+        const autoCard = document.getElementById('stat-auto-card');
+        const partialCard = document.getElementById('stat-partial-card');
+        const legendFuture = document.querySelectorAll('.legend-future');
 
         btns.forEach(b => b.classList.remove('active'));
 
@@ -965,6 +1011,14 @@
             btns[1].classList.add('active');
             grid.classList.add('future-view');
             compBar.classList.add('visible');
+
+            // Show all 4 stat cards
+            autoCard.style.display = '';
+            partialCard.style.display = '';
+            statsBar.classList.add('expanded');
+
+            // Show future legend items
+            legendFuture.forEach(el => el.style.display = '');
 
             // Animate comparison bars
             setTimeout(() => {
@@ -974,17 +1028,25 @@
 
             // Update stats
             document.getElementById('stat-manual').textContent = '1';
-            document.querySelector('#stats-bar .stat-card:first-child .stat-label').textContent = 'Remains manual';
+            document.getElementById('stat-manual-label').textContent = 'Remains manual';
         } else {
             btns[0].classList.add('active');
             grid.classList.remove('future-view');
             compBar.classList.remove('visible');
 
+            // Hide auto/partial stat cards
+            autoCard.style.display = 'none';
+            partialCard.style.display = 'none';
+            statsBar.classList.remove('expanded');
+
+            // Hide future legend items
+            legendFuture.forEach(el => el.style.display = 'none');
+
             document.getElementById('bar-auto').style.width = '0%';
             document.getElementById('bar-partial').style.width = '0%';
 
             document.getElementById('stat-manual').textContent = '12';
-            document.querySelector('#stats-bar .stat-card:first-child .stat-label').textContent = 'Manual steps today';
+            document.getElementById('stat-manual-label').textContent = 'Manual steps today';
         }
     }
     </script>
